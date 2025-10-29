@@ -1,12 +1,23 @@
+import { ArrowUpIcon } from "@radix-ui/react-icons";
 import { Table, Text } from "@radix-ui/themes";
 import Link from "next/link";
 import IssueStatusBadge from "./IssueStatusBadge";
-import { Issue } from "./generated/prisma/client";
-import prisma from "@/prisma/client";
+import { Issue } from "./generated/prisma/browser";
+import { Status } from "./generated/prisma/enums";
 
-const IssuesTable = async () => {
-  const issues: Issue[] = await prisma.issue.findMany();
+export interface IssueQuery {
+  status: Status;
+  orderBy: keyof Issue;
+  page: string;
+}
 
+interface Props {
+  searchParams: IssueQuery;
+  issues: Issue[];
+}
+
+const IssuesTable = async ({ searchParams, issues }: Props) => {
+  const resolvedSearchParams = await searchParams;
   return (
     <Table.Root variant="surface" mt="5">
       <Table.Header>
@@ -16,7 +27,16 @@ const IssuesTable = async () => {
               key={column.value}
               className={column.className}
             >
-              <Link href={""}>{column.label}</Link>
+              <Link
+                href={{
+                  query: { ...resolvedSearchParams, orderBy: column.value },
+                }}
+              >
+                {column.label}
+              </Link>
+              {column.value === resolvedSearchParams.orderBy && (
+                <ArrowUpIcon className="inline" />
+              )}
             </Table.ColumnHeaderCell>
           ))}
         </Table.Row>
@@ -52,5 +72,7 @@ const columns: {
   { label: "Status", value: "status", className: "hidden md:table-cell" },
   { label: "Created", value: "createdAt", className: "hidden md:table-cell" },
 ];
+
+export const columnNames = columns.map((column) => column.value);
 
 export default IssuesTable;
