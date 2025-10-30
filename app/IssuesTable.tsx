@@ -2,8 +2,8 @@ import { ArrowUpIcon } from "@radix-ui/react-icons";
 import { Table, Text } from "@radix-ui/themes";
 import Link from "next/link";
 import IssueStatusBadge from "./IssueStatusBadge";
-import { Issue } from "./generated/prisma/browser";
-import { Status } from "./generated/prisma/enums";
+import { Issue } from "./generated/prisma/client";
+import { Status } from "./generated/prisma/client";
 
 export interface IssueQuery {
   status: Status;
@@ -12,14 +12,14 @@ export interface IssueQuery {
 }
 
 interface Props {
-  searchParams: IssueQuery;
   issues: Issue[];
+  searchParams: IssueQuery;
 }
 
-const IssuesTable = async ({ searchParams, issues }: Props) => {
+const IssuesTable = async ({ issues, searchParams }: Props) => {
   const resolvedSearchParams = await searchParams;
   return (
-    <Table.Root variant="surface" mt="5">
+    <Table.Root variant="surface">
       <Table.Header>
         <Table.Row>
           {columns.map((column) => (
@@ -33,10 +33,10 @@ const IssuesTable = async ({ searchParams, issues }: Props) => {
                 }}
               >
                 {column.label}
+                {column.value === resolvedSearchParams.orderBy && (
+                  <ArrowUpIcon className="inline" />
+                )}
               </Link>
-              {column.value === resolvedSearchParams.orderBy && (
-                <ArrowUpIcon className="inline" />
-              )}
             </Table.ColumnHeaderCell>
           ))}
         </Table.Row>
