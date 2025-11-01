@@ -11,7 +11,6 @@ interface Props {
 
 const HomePage = async ({ searchParams }: Props) => {
   const resolvedSearchParams = await searchParams;
-
   const status = Object.values(Status).includes(resolvedSearchParams.status)
     ? resolvedSearchParams.status
     : undefined;
@@ -20,8 +19,8 @@ const HomePage = async ({ searchParams }: Props) => {
     ? { [resolvedSearchParams.orderBy]: "asc" }
     : undefined;
 
+  const pageSize = 5;
   const page = parseInt(resolvedSearchParams.page) || 1;
-  const pageSize = 10;
 
   const issues: Issue[] = await prisma.issue.findMany({
     where: { status },
@@ -29,16 +28,13 @@ const HomePage = async ({ searchParams }: Props) => {
     skip: (page - 1) * pageSize,
     take: pageSize,
   });
-
   const issueCount = await prisma.issue.count({
-    where: {
-      status,
-    },
+    where: { status },
   });
   return (
     <Flex direction="column" gap="3">
       <IssueStatusFilter />
-      <IssuesTable issues={issues} searchParams={searchParams} />
+      <IssuesTable searchParams={searchParams} issues={issues} />
       <Pagination
         itemCount={issueCount}
         pageSize={pageSize}

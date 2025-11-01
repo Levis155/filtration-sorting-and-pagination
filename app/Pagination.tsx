@@ -16,8 +16,8 @@ interface Props {
 }
 
 const Pagination = ({ itemCount, pageSize, currentPage }: Props) => {
-  const router = useRouter();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const pageCount = Math.ceil(itemCount / pageSize);
 
   if (pageCount <= 1) return null;
@@ -33,7 +33,6 @@ const Pagination = ({ itemCount, pageSize, currentPage }: Props) => {
       <Text>
         Page {currentPage} of {pageCount}
       </Text>
-
       <Button
         color="gray"
         variant="soft"

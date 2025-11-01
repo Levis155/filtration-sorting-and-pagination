@@ -12,11 +12,11 @@ export interface IssueQuery {
 }
 
 interface Props {
-  issues: Issue[];
   searchParams: IssueQuery;
+  issues: Issue[];
 }
 
-const IssuesTable = async ({ issues, searchParams }: Props) => {
+const IssuesTable = async ({ searchParams, issues }: Props) => {
   const resolvedSearchParams = await searchParams;
   return (
     <Table.Root variant="surface">
@@ -33,7 +33,7 @@ const IssuesTable = async ({ issues, searchParams }: Props) => {
                 }}
               >
                 {column.label}
-                {column.value === resolvedSearchParams.orderBy && (
+                {resolvedSearchParams.orderBy === column.value && (
                   <ArrowUpIcon className="inline" />
                 )}
               </Link>
