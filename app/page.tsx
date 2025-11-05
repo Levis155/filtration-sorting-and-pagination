@@ -1,12 +1,9 @@
-import { Flex, Table, Text } from "@radix-ui/themes";
-import Link from "next/link";
-import IssueStatusBadge from "./IssueStatusBadge";
-import { Issue, Status } from "./generated/prisma/client";
 import prisma from "@/prisma/client";
-import IssueStatusFilter from "./IssueStatusFilter";
-import { ArrowUpIcon } from "@radix-ui/react-icons";
-import Pagination from "./Pagination";
+import { Flex } from "@radix-ui/themes";
+import { Issue, Status } from "./generated/prisma/browser";
 import IssuesTable, { columnNames, IssueQuery } from "./IssuesTable";
+import IssueStatusFilter from "./IssueStatusFilter";
+import Pagination from "./Pagination";
 
 interface Props {
   searchParams: IssueQuery;
@@ -23,28 +20,27 @@ const HomePage = async ({ searchParams }: Props) => {
     ? { [resolvedSearchParams.orderBy]: "asc" }
     : undefined;
 
-  const page = parseInt(resolvedSearchParams.page) || 1;
+  const currentPage = parseInt(resolvedSearchParams.page) || 1;
   const pageSize = 5;
 
   const issues: Issue[] = await prisma.issue.findMany({
     where: { status },
     orderBy,
-    skip: (page - 1) * pageSize,
+    skip: (currentPage - 1) * pageSize,
     take: pageSize,
   });
 
   const issueCount = await prisma.issue.count({
     where: { status },
   });
-
   return (
     <Flex direction="column" gap="3">
       <IssueStatusFilter />
       <IssuesTable searchParams={searchParams} issues={issues} />
       <Pagination
         itemCount={issueCount}
+        currentPage={currentPage}
         pageSize={pageSize}
-        currentPage={page}
       />
     </Flex>
   );
