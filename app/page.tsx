@@ -1,12 +1,12 @@
 import prisma from "@/prisma/client";
 import { Flex } from "@radix-ui/themes";
-import { Issue, Status } from "./generated/prisma/browser";
-import IssuesTable, { columnNames, IssueQuery } from "./IssuesTable";
 import IssueStatusFilter from "./IssueStatusFilter";
+import IssuesTable, { columnNames } from "./IssuesTable";
 import Pagination from "./Pagination";
+import { Issue, Status } from "./generated/prisma/browser";
 
 interface Props {
-  searchParams: IssueQuery;
+  searchParams: { status: Status; orderBy: keyof Issue; page: string };
 }
 
 const HomePage = async ({ searchParams }: Props) => {
@@ -21,7 +21,7 @@ const HomePage = async ({ searchParams }: Props) => {
     : undefined;
 
   const currentPage = parseInt(resolvedSearchParams.page) || 1;
-  const pageSize = 5;
+  const pageSize = 10;
 
   const issues: Issue[] = await prisma.issue.findMany({
     where: { status },
@@ -38,8 +38,8 @@ const HomePage = async ({ searchParams }: Props) => {
       <IssueStatusFilter />
       <IssuesTable searchParams={searchParams} issues={issues} />
       <Pagination
-        itemCount={issueCount}
         currentPage={currentPage}
+        itemCount={issueCount}
         pageSize={pageSize}
       />
     </Flex>

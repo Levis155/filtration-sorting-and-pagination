@@ -4,21 +4,21 @@ import Link from "next/link";
 import { Issue, Status } from "./generated/prisma/browser";
 import IssueStatusBadge from "./IssueStatusBadge";
 
-export interface IssueQuery {
-  status: Status;
-  orderBy: keyof Issue;
-  page: string;
-}
-
 interface Props {
   searchParams: IssueQuery;
   issues: Issue[];
 }
 
+interface IssueQuery {
+  status: Status;
+  orderBy: keyof Issue;
+  page: string;
+}
+
 const IssuesTable = async ({ searchParams, issues }: Props) => {
   const resolvedSearchParams = await searchParams;
   return (
-    <Table.Root variant="surface">
+    <Table.Root variant="surface" mt="5">
       <Table.Header>
         <Table.Row>
           {columns.map((column) => (
@@ -32,7 +32,7 @@ const IssuesTable = async ({ searchParams, issues }: Props) => {
                 }}
               >
                 {column.label}
-                {column.value === resolvedSearchParams.orderBy && (
+                {resolvedSearchParams.orderBy === column.value && (
                   <ArrowUpIcon className="inline" />
                 )}
               </Link>
