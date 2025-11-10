@@ -20,11 +20,13 @@ const IssueStatusFilter = () => {
         defaultValue={searchParams.get("status") || ""}
         onValueChange={(status) => {
           const params = new URLSearchParams(searchParams);
+
           if (status) {
             params.set("status", status);
           } else {
             params.delete("status");
           }
+
           const query = params.size ? `?${params.toString()}` : "";
           router.push(`/${query}`);
         }}
